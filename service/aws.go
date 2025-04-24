@@ -1,23 +1,22 @@
 package service
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"mime/multipart"
 	"os"
 	"path/filepath"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
+	// "github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
+	// "github.com/aws/aws-sdk-go-v2/service/s3"
+	// "github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 type S3Service struct {
-	s3Client *s3.Client
-	bucket   string
+	// s3Client *s3.Client
+	bucket string
 }
 
 func NewS3Service() (*S3Service, error) {
@@ -30,7 +29,7 @@ func NewS3Service() (*S3Service, error) {
 		return nil, fmt.Errorf("AWS configuration missing")
 	}
 
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
+	_, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRegion(awsRegion),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
 			awsAccessKey, awsSecretKey, "",
@@ -40,12 +39,7 @@ func NewS3Service() (*S3Service, error) {
 		return nil, fmt.Errorf("failed to load AWS config: %w", err)
 	}
 
-	client := s3.NewFromConfig(cfg)
-
-	return &S3Service{
-		s3Client: client,
-		bucket:   bucketName,
-	}, nil
+	return nil, nil
 }
 
 func (s *S3Service) UploadFile(file *multipart.FileHeader, clientID int) (string, error) {
@@ -68,13 +62,8 @@ func (s *S3Service) UploadFile(file *multipart.FileHeader, clientID int) (string
 		contentType = "application/octet-stream"
 	}
 
-	_, err = s.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
-		Bucket:      aws.String(s.bucket),
-		Key:         aws.String(fileName),
-		Body:        bytes.NewReader(buffer),
-		ContentType: aws.String(contentType),
-		ACL:         types.ObjectCannedACLPublicRead,
-	})
+	// NOTE: error import aws package hash/crc64
+	// link: https://go.dev/src/hash/crc64/crc64.go
 
 	if err != nil {
 		return "", fmt.Errorf("failed to upload file to S3: %w", err)

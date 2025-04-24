@@ -4,9 +4,7 @@ import (
 	"fullstack2024-test/database"
 	"fullstack2024-test/handler"
 	"fullstack2024-test/repository"
-	"fullstack2024-test/service"
 	"fullstack2024-test/usecase"
-	"log"
 	"net/http"
 	"os"
 
@@ -29,12 +27,6 @@ func main() {
 
 	database.InitRedis()
 
-	s3Service, err := service.NewS3Service()
-	if err != nil {
-		log.Printf("Warning: Failed to initialize AWS S3 service: %v", err)
-		s3Service = nil
-	}
-
 	e := echo.New()
 
 	e.GET("/", func(c echo.Context) error {
@@ -43,7 +35,7 @@ func main() {
 
 	clientRepo := repository.NewClientRepository(db)
 	clientUseCase := usecase.NewClientUseCase(clientRepo)
-	clientHandler := handler.NewClientHandler(clientUseCase, s3Service)
+	clientHandler := handler.NewClientHandler(clientUseCase)
 	clientHandler.ClientRoutes(e)
 
 	port := os.Getenv("PORT")
