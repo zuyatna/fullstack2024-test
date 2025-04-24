@@ -69,15 +69,6 @@ func (client *ClientHandler) UpdateClientByID(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
 	}
 
-	existingClient, err := client.clientUseCase.GetClientByID(clientID)
-	if err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Client not found"})
-	}
-
-	if existingClient == nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Client not found"})
-	}
-
 	updatedClient, err := client.clientUseCase.UpdateClientByID(clientID, &clientModel)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to update client"})

@@ -10,8 +10,7 @@ import (
 	// "github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
-	// "github.com/aws/aws-sdk-go-v2/service/s3"
-	// "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	// "github.com/aws/aws-sdk-go-v2/service/s3" // error go: github.com/aws/aws-sdk-go-v2/service/internal/checksum imports hash/crc64: package hash/crc64 is not in std (C:\Program Files\Go\src\hash\crc64)
 )
 
 type S3Service struct {
@@ -64,10 +63,6 @@ func (s *S3Service) UploadFile(file *multipart.FileHeader, clientID int) (string
 
 	// NOTE: error import aws package hash/crc64
 	// link: https://go.dev/src/hash/crc64/crc64.go
-
-	if err != nil {
-		return "", fmt.Errorf("failed to upload file to S3: %w", err)
-	}
 
 	region := os.Getenv("AWS_REGION")
 	fileURL := fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", s.bucket, region, fileName)
