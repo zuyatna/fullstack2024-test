@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"fullstack2024-test/database"
 	"fullstack2024-test/model"
 
@@ -70,12 +71,12 @@ func (r *ClientRepository) UpdateClientByID(id int, client *model.Client) (*mode
 
 	if existingClient.Slug != updatedClient.Slug {
 		if err := database.DeleteKey(ctx, existingClient.Slug); err != nil {
-			// Log the error but continue
+			fmt.Println("Error deleting old key:", err)
 		}
 	}
 
 	if err := database.StoreJSON(ctx, updatedClient.Slug, updatedClient); err != nil {
-		// Log the error but continue
+		fmt.Println("Error storing updated client:", err)
 	}
 
 	return updatedClient, nil
@@ -93,7 +94,7 @@ func (r *ClientRepository) DeleteClientByID(id int) error {
 
 	ctx := context.Background()
 	if err := database.DeleteKey(ctx, client.Slug); err != nil {
-		// Log the error but continue
+		fmt.Println("Error deleting client from Redis:", err)
 	}
 
 	return nil
